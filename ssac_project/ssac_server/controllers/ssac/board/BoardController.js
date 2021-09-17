@@ -1,4 +1,4 @@
-const con = require("../../modules/mysql");
+const con = require("../../../modules/mysql");
 
 const BoardController = {
   readAlldata: (req, res) => {
@@ -39,23 +39,20 @@ const BoardController = {
 
   saveData: (req, res) => {
     const { title, content, boardPw, writer } = req.body;
-    const sql = "insert into board values (?, ?, ?, ?, ?, ?)";
-    const params = [boardIdx, writer, title, content, writeTime, boardPw];
+    const sql =
+      "insert into board (title, content, writer, writeTime, boardPw) values ( ?, ?, ?, ?, ?)";
+    const params = [title, content, Number(writer), new Date(), boardPw];
     con.query(sql, params, (err, result) => {
-      if (err)
+      if (err) {
+        console.log(err);
         return res.status(400).json({
           message: "error",
         });
+      }
 
       res.status(200).json({
-        data: {
-          boardIdx: boardIdx,
-          writer: writer,
-          title: title,
-          content: content,
-          writeTime: Date(),
-          boardPw: boardPw,
-        },
+        message: "게시물 저장 완료",
+        data: result,
       });
     });
   },
