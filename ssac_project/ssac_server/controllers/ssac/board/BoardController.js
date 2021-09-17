@@ -9,29 +9,37 @@ const BoardController = {
           message: "조회 실패",
         });
 
-      res.status(200).json({
-        message: "조회 성공",
-        data: result,
-      });
+      if (result.length === 0) {
+        res.status(500).json({
+          message: "DB 서버 에러",
+        });
+      } else {
+        res.status(200).json({
+          message: "조회 성공",
+          data: result,
+        });
+      }
     });
   },
 
   readIdxdata: (req, res) => {
     const { idx } = req.params;
-    const sql = "select * from board where boardIdx =?";
+    const sql = "select * from board where boardIdx = ?";
     const params = [idx];
     con.query(sql, params, (err, result) => {
-      if (err) {
-        res.status(400).json({
+      if (err)
+        return res.status(500).json({
           message: "error",
         });
-      } else if (Number(idx)) {
+
+      if (result.length !== 0) {
         res.status(200).json({
+          message: "조회성공",
           data: result,
         });
       } else {
         res.status(401).json({
-          message: "error",
+          message: "결과값이 없습니다.",
         });
       }
     });
@@ -45,8 +53,8 @@ const BoardController = {
     con.query(sql, params, (err, result) => {
       if (err) {
         console.log(err);
-        return res.status(400).json({
-          message: "error",
+        return res.status(500).json({
+          message: "DB 서버 에러",
         });
       }
 
@@ -62,15 +70,14 @@ const BoardController = {
     const sql = "delete from board where boardIdx=?";
     const params = [idx];
     con.query(sql, params, (err, result) => {
-      if (Number(idx)) {
-        res.status(200).json({
-          message: "삭제 완료",
+      if (err)
+        return res.status(500).json({
+          message: "DB 서버 에러",
         });
-      } else {
-        res.status(400).json({
-          message: "error",
-        });
-      }
+
+      res.status(200).json({
+        message: "삭제 완료",
+      });
     });
   },
 };

@@ -1,14 +1,10 @@
-const express = require("express");
-const router = express.Router();
+var express = require("express");
+var router = express.Router();
 
+const authRouter = require("./auth/index");
 const boardRouter = require("./board/index");
 
-const AuthController = require("../../controllers/ssac/auth/AuthController");
-
-router.post("/signup", AuthController.signup);
-
-router.post("/signin", AuthController.login);
-
+router.use("/auth", authRouter);
 router.use("/board", boardRouter);
 
 module.exports = router;
